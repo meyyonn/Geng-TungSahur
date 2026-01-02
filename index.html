@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HQ - TUNG SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <div class="bg-grid"></div>
+
+    <div class="side-bar left-bar">
+        <a href="index.html" class="nav-btn" style="background:#00ff9d; color:#000;">
+            <i class="fa-solid fa-house"></i>
+        </a>
+        <a href="bio.html" class="nav-btn">
+            <i class="fa-solid fa-users"></i>
+        </a>
+        <a href="chat.html" class="nav-btn">
+            <i class="fa-solid fa-comments"></i>
+        </a>
+    </div>
+
+    <div class="side-bar right-bar">
+        <a href="game.html" class="nav-btn">
+            <i class="fa-solid fa-gamepad"></i>
+        </a>
+        <a href="#" class="nav-btn">
+            <i class="fa-solid fa-gear"></i>
+        </a>
+    </div>
+
+    <div class="container" style="margin-top: 50px;">
+        <h1>TUNG SAHUR OS</h1>
+        <p>SISTEM OPERASI SAHUR v4.0</p>
+        <hr style="border-color:#333; margin: 20px 0;">
+        
+        <div style="margin-top:20px;">
+            <i class="fa-solid fa-satellite-dish" style="font-size: 3em; color: #ff0055;"></i>
+            <p>Selamat datang ke markas.</p>
+            <p>Sila pilih menu di sisi <strong>KIRI</strong> atau <strong>KANAN</strong> skrin.</p>
+        </div>
+    </div>
+
+    <div class="container" style="text-align:left;">
+        <h3 style="color:#fff; margin:0; border-bottom: 2px solid #00ff9d; display:inline-block;">LIVE STATUS</h3>
+        <div id="status-list" style="margin-top:15px;">
+            Loading data...
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script src="config.js"></script> 
+
+    <script>
+        // Script simple untuk Home je: Tarik status member
+        // Kita tak perlu script panjang2 kat sini sebab config dah ada kat config.js
+        
+        db.ref('operatives').on('value', (snapshot) => {
+            const div = document.getElementById('status-list');
+            div.innerHTML = ""; // Clear dulu
+            
+            if(snapshot.exists()){
+                snapshot.forEach(child => {
+                    const data = child.val();
+                    const isOnline = data.status ? true : false;
+                    
+                    div.innerHTML += `
+                    <div class="status-item">
+                        <span style="font-weight:bold; color:white;">${child.key}</span>
+                        <span style="color: ${isOnline ? '#00ff9d' : '#555'}">
+                            ${isOnline ? '● ONLINE' : '○ OFFLINE'}
+                        </span>
+                    </div>`;
+                });
+            } else {
+                div.innerHTML = "<p>Tiada data lagi.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
