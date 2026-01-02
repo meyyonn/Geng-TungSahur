@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENG TUNG SAHUR - HQ</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">TUNG_SAHUR <span>OS</span></div>
+        <div class="nav-links">
+            <button onclick="showSection('home')">HOME</button>
+            <button onclick="showSection('profiles')">PROFIL</button>
+            <button onclick="showSection('wishes')">CHAT</button>
+            <button onclick="showSection('gacha')">NASIB</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <section id="home" class="active-section">
+            <h1 class="glitch-text">SQUADRON STATUS: ONLINE</h1>
+            <p class="status-sys">DATABASE CONNECTED: <span style="color:#00ff9d">GENG-TUNGSAHUR</span></p>
+            
+            <div class="grid-menu">
+                <div class="card" onclick="showSection('profiles')">
+                    <h3>👥 OPERATIVES</h3>
+                    <p>Update Status & Skill Member</p>
+                </div>
+                <div class="card" onclick="showSection('wishes')">
+                    <h3>💬 SECURE CHAT</h3>
+                    <p>Bahan Member / Wish List</p>
+                </div>
+                <div class="card" onclick="showSection('gacha')">
+                    <h3>🎲 RANDOMIZER</h3>
+                    <p>Mesin Tentukan Takdir</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="profiles" style="display:none;">
+            <h2>OPERATIVE DATABASE</h2>
+            <div class="form-group">
+                <label>PILIH MEMBER:</label>
+                <select id="editName">
+                    <option value="Amirul">AMIRUL</option>
+                    <option value="Adli">ADLI</option>
+                    <option value="Haikal">HAIKAL</option>
+                    <option value="Haziq">HAZIQ</option>
+                    <option value="Nabil">NABIL</option>
+                </select>
+                <br><br>
+                <input type="text" id="editStatus" placeholder="Update Status (e.g. Tengah Gaming...)">
+                <input type="text" id="editSkill" placeholder="Skill (e.g. Tidur Lambat)">
+                <button onclick="updateProfile()">UPDATE DATA</button>
+            </div>
+            
+            <div id="profile-list" class="profile-grid">
+                <div class="loading">CONNECTING TO SERVER...</div>
+            </div>
+        </section>
+
+        <section id="wishes" style="display:none;">
+            <h2>ENCRYPTED COMMS</h2>
+            <div class="chat-box" id="chat-display">
+                </div>
+            <div class="chat-input">
+                <input type="text" id="msgInput" placeholder="Taip pesan kat sini...">
+                <button onclick="sendMessage()">HANTAR</button>
+            </div>
+        </section>
+
+        <section id="gacha" style="display:none;">
+            <h2>MESIN TAKDIR</h2>
+            <div class="gacha-box">
+                <p>Siapa yang kena?</p>
+                <h1 id="gachaResult">???</h1>
+                <button onclick="spinGacha()">PUSING SEKARANG</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
