@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SETTINGS :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>if(!localStorage.getItem('username')) window.location.href='login.html';</script>
+</head>
+<body>
+
+    <div class="container animate-in">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title">SYSTEM CONTROL</h1>
+            <p style="color:#888;">Configure & Maintain.</p>
+        </div>
+
+        <div class="card">
+            <h2>USER SETTINGS</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <span>Logged in as:</span>
+                <b style="color:var(--neon-green); font-size:1.2em;" id="currUser">...</b>
+            </div>
+            <button onclick="changeName()">TUKAR NAMA / RELOGIN</button>
+        </div>
+
+        <div class="card" style="border-left-color:var(--neon-red);">
+            <h2 style="color:var(--neon-red); border-color:var(--neon-red);">DANGER ZONE</h2>
+            <p style="color:#aaa; font-size:0.9em; margin-bottom:15px;">
+                Amaran: Reset Database akan memadam semua history chat, status member, dan rekod. Guna bila start sesi lepak baru.
+            </p>
+            
+            <button onclick="resetStatus()" style="border-color:#ffaa00; color:#ffaa00;">
+                <i class="fa-solid fa-broom"></i> CLEAR STATUS ONLY
+            </button>
+
+            <button onclick="resetAll()" class="btn-danger">
+                <i class="fa-solid fa-skull"></i> FORMAT DATABASE (RESET ALL)
+            </button>
+        </div>
+
+        <div style="text-align:center; margin-top:30px; color:#555; font-size:0.8em;">
+            <p>TUNG_SAHUR OS v1.0<br>Built by THE GANG</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        document.getElementById('currUser').innerText = localStorage.getItem('username');
+
+        // Function Tukar Nama
+        function changeName() {
+            if(confirm("Logout dan tukar nama?")) {
+                localStorage.removeItem('username');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Function Clear Status Sahaja (Chat kekal)
+        function resetStatus() {
+            if(confirm("Confirm nak clear status semua member? (Chat tak hilang)")) {
+                db.ref('operatives').remove()
+                .then(() => alert("✅ Status list dah clear."))
+                .catch(err => alert("Error: " + err));
+            }
+        }
+
+        // Function WIPE OUT SEMUA (Full Reset)
+        function resetAll() {
+            const code = prompt("Taip 'RESET' untuk confirm format database:");
+            if(code === "RESET") {
+                db.ref().remove()
+                .then(() => {
+                    alert("💥 SYSTEM PURGED. Database kosong.");
+                    window.location.reload();
+                })
+                .catch(err => alert("Error: " + err));
+            } else if (code !== null) {
+                alert("Salah kod. Batal.");
+            }
+        }
+    </script>
+</body>
+</html>

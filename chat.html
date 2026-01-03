@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAT :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        if(!localStorage.getItem('username')) { window.location.href = 'login.html'; }
+    </script>
+
+    <style>
+        .chat-area {
+            height: 65vh; /* Tinggi chat box */
+            overflow-y: auto; /* Boleh scroll */
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+        }
+        
+        /* Mesej Sendiri (Kanan) */
+        .msg-row.me {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+        .msg-row.me .bubble {
+            background: rgba(0, 255, 157, 0.15);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            border-radius: 10px 10px 0 10px;
+        }
+
+        /* Mesej Orang Lain (Kiri) */
+        .msg-row.other {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+        .msg-row.other .bubble {
+            background: #222;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 10px 10px 10px 0;
+        }
+
+        .bubble {
+            padding: 8px 12px;
+            font-size: 1em;
+            word-wrap: break-word;
+        }
+
+        .sender-name {
+            font-size: 0.7em;
+            color: #777;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <a href="index.html" style="color:#888; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> BACK</a>
+            <h2 style="margin:0; color:var(--neon-green); font-size:1.2em;">COMMS CHANNEL</h2>
+        </div>
+
+        <div id="chatDisplay" class="chat-area">
+            <div style="text-align:center; color:#555; margin-top:20px;">
+                <i class="fa-solid fa-satellite-dish"></i><br>Establishing Connection...
+            </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="msgInput" placeholder="Taip mesej..." style="margin-bottom:0;" autocomplete="off">
+            <button onclick="sendMessage()" style="width:60px; margin-bottom:0; background:var(--neon-green); color:#000;">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        const myName = localStorage.getItem('username');
+        const chatBox = document.getElementById('chatDisplay');
+        const input = document.getElementById('msgInput');
+        let firstLoad = true;
+
+        // 1. LISTEN MESSAGE (Real-time)
+        // Kita guna 'limitToLast(50)' supaya tak load semua sejarah zaman purba
+        db.ref('chats').limitToLast(50).on('value', (snapshot) => {
+            if(firstLoad) {
+                chatBox.innerHTML = ""; // Clear "Loading..." text
+                firstLoad = false;
+            }
+
+            // Teknik ni akan clear chatbox dan render balik (Simple method)
+            // Untuk advanced performance kita guna 'child_added', tapi ini dah cukup laju
+            chatBox.innerHTML = ""; 
+            
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const isMe = data.user === myName;
+                
+                const html = `
+                    <div class="msg-row ${isMe ? 'me' : 'other'}">
+                        <span class="sender-name">${data.user}</span>
+                        <div class="bubble">${data.message}</div>
+                    </div>
+                `;
+                chatBox.innerHTML += html;
+            });
+
+            // Auto Scroll ke Bawah
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        // 2. SEND MESSAGE
+        function sendMessage() {
+            const txt = input.value;
+            
+            if(txt.trim() !== "") {
+                db.ref('chats').push({
+                    user: myName,
+                    message: txt,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+                input.value = ""; // Kosongkan input
+                input.focus(); // Fokus balik kat input
+            }
+        }
+
+        // Boleh tekan Enter untuk send
+        input.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+    </script>
+
+</body>
+</html>

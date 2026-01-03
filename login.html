@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="display:flex; align-items:center; justify-content:center;">
+
+    <div class="container animate-in" style="width:100%; max-width:400px; padding-bottom:0;">
+        
+        <div style="text-align:center; margin-bottom:30px;">
+            <i class="fa-solid fa-shield-halved" style="font-size:3em; color:#00ff9d; text-shadow:0 0 20px #00ff9d;"></i>
+            <h1 class="header-title" style="border:none; margin-top:10px;">SYSTEM ACCESS</h1>
+            <p style="color:#888; letter-spacing:1px;">IDENTIFICATION REQUIRED</p>
+        </div>
+
+        <div class="card">
+            <h2 class="text-center">WHO ARE YOU?</h2>
+            
+            <input type="text" id="usernameInput" placeholder="Enter Codename..." style="text-align:center; font-size:1.2em; text-transform:uppercase;">
+            
+            <button onclick="loginManual()">ACCESS SYSTEM</button>
+
+            <div style="text-align:center; margin:15px 0; color:#555;">--- OR QUICK SELECT ---</div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button onclick="quickLogin('AMIRUL')" style="border-color:#444; color:#aaa;">AMIRUL</button>
+                <button onclick="quickLogin('ADLI')" style="border-color:#444; color:#aaa;">ADLI</button>
+                <button onclick="quickLogin('HAIKAL')" style="border-color:#444; color:#aaa;">HAIKAL</button>
+                <button onclick="quickLogin('HAZIQ')" style="border-color:#444; color:#aaa;">HAZIQ</button>
+				<button onclick="quickLogin('NABIL')" style="border-color:#444; color:#aaa;">NABIL</button>
+            </div>
+        </div>
+
+        <div class="text-center mt-20">
+            <small style="color:#333;">SECURE CONNECTION v4.0</small>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        // 1. Check kalau dah login, terus tendang ke Menu Utama
+        if(localStorage.getItem('username')) {
+            window.location.href = 'index.html';
+        }
+
+        // 2. Login Manual (Taip sendiri)
+        function loginManual() {
+            const val = document.getElementById('usernameInput').value;
+            if(val.trim() === "") {
+                alert("ACCESS DENIED: Name required.");
+                return;
+            }
+            proceed(val);
+        }
+
+        // 3. Login Button (Shortcut)
+        function quickLogin(name) {
+            proceed(name);
+        }
+
+        // 4. Simpan & Redirect
+        function proceed(name) {
+            const finalName = name.toUpperCase().trim();
+            localStorage.setItem('username', finalName);
+            
+            // Effect sikit sebelum masuk
+            document.body.innerHTML = `
+                <div style="display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column; background:#000;">
+                    <h1 style="color:#00ff9d; font-family:'Courier New'">ACCESS GRANTED</h1>
+                    <p style="color:#fff;">Welcome, ${finalName}</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000); // Tunggu 1 saat baru masuk
+        }
+    </script>
+</body>
+</html>

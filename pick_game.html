@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME PICKER :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>if(!localStorage.getItem('username')) window.location.href='login.html';</script>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title">MISSION SELECTOR</h1>
+            <p style="color:#888;">Deciding next battleground...</p>
+        </div>
+
+        <div class="card" style="text-align:center; padding:40px 20px; min-height:250px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+            
+            <i class="fa-solid fa-gamepad" style="font-size:3em; color:#00ff9d; margin-bottom:15px; filter:drop-shadow(0 0 10px #00ff9d);"></i>
+            
+            <h1 id="gameResult" style="font-size:2.5em; margin:0; color:#fff; text-transform:uppercase;">IDLE</h1>
+            <p id="gameStatus" style="color:#555; font-size:0.9em;">System Standby</p>
+
+        </div>
+
+        <button onclick="spinGame()" id="btnSpin" style="height:60px; font-size:1.3em;">
+            <i class="fa-solid fa-dice"></i> ROLL GAME
+        </button>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        // --- SENARAI GAME (Boleh tambah/buang kat sini) ---
+        const games = [
+            "MOBILE LEGENDS",
+            "PUBG MOBILE",
+            "CALL OF DUTY",
+            "E-FOOTBALL",
+            "ROBLOX",
+            "FREE FIRE",
+            "AMONG US",
+            "TIDUR AJE LAH" // Pilihan troll haha
+        ];
+
+        function spinGame() {
+            const display = document.getElementById('gameResult');
+            const status = document.getElementById('gameStatus');
+            const btn = document.getElementById('btnSpin');
+
+            // Disable button
+            btn.disabled = true;
+            btn.innerHTML = "CALCULATING...";
+            status.innerText = "ANALYZING SKILL ISSUE...";
+            status.style.color = "#00ff9d";
+
+            let count = 0;
+            
+            // Loop Animasi
+            const loop = () => {
+                // Pilih random game
+                const randomGame = games[Math.floor(Math.random() * games.length)];
+                display.innerText = randomGame;
+                
+                // Tukar warna text random
+                const colors = ["#fff", "#00ff9d", "#00eaff", "#ff0055"];
+                display.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+                count++;
+
+                if (count < 25) {
+                    setTimeout(loop, 60); // Speed Laju
+                } else if (count < 40) {
+                    setTimeout(loop, count * 6); // Speed Perlahan
+                } else {
+                    // STOP! Pemenang
+                    const finalGame = games[Math.floor(Math.random() * games.length)];
+                    display.innerText = finalGame;
+                    
+                    // Style Final
+                    display.style.color = "#00ff9d";
+                    display.style.textShadow = "0 0 20px #00ff9d";
+                    display.style.fontSize = "3em"; // Besar sikit bila menang
+                    
+                    status.innerText = "MISSION CONFIRMED";
+                    status.style.color = "#fff";
+                    
+                    // Reset Button
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> REROLL';
+                    
+                    // (Optional) Save result ke database kalau nak member lain tahu
+                    // db.ref('current_activity').set(finalGame); 
+                }
+            };
+
+            loop();
+        }
+    </script>
+</body>
+</html>

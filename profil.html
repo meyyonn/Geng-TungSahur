@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROFILE :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        if(!localStorage.getItem('username')) { window.location.href = 'login.html'; }
+    </script>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> KEMBALI KE MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title">DATA OPERATIF</h1>
+        </div>
+
+        <div class="card">
+            <h2>KEMASKINI SAYA</h2>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                <div style="width:50px; height:50px; background:#111; border:1px solid var(--neon-green); display:flex; align-items:center; justify-content:center; color:var(--neon-green); font-size:1.5em; border-radius:50%;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0; color:#fff;" id="myDisplayName">...</h3>
+                    <small style="color:#888;">ID: CONFIRMED</small>
+                </div>
+            </div>
+
+            <label style="color:#aaa; font-size:0.9em;">Status Terkini:</label>
+            <input type="text" id="inpStatus" placeholder="Contoh: OTW Mamak / Tengah Gaming">
+            
+            <label style="color:#aaa; font-size:0.9em;">Role / Skill:</label>
+            <input type="text" id="inpRole" placeholder="Contoh: Tanker / Tukang Bayar">
+
+            <button onclick="saveProfile()">UPDATE DATA</button>
+        </div>
+
+        <div class="card">
+            <h2>SENARAI GENG</h2>
+            <div id="memberList">
+                <p style="text-align:center; color:#555;">Scanning Network...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        const myName = localStorage.getItem('username');
+        document.getElementById('myDisplayName').innerText = myName;
+
+        // --- 1. FUNGSI UPDATE DATA ---
+        function saveProfile() {
+            const status = document.getElementById('inpStatus').value;
+            const role = document.getElementById('inpRole').value;
+
+            if(!status) {
+                alert("Woi, status kosong tu!");
+                return;
+            }
+
+            const btn = document.querySelector('button');
+            btn.innerText = "UPDATING...";
+
+            // Hantar ke Database
+            db.ref('operatives/' + myName).update({
+                status: status,
+                role: role,
+                lastSeen: Date.now() // Optional: Boleh guna utk tengok bila last online
+            }).then(() => {
+                alert("Data berjaya dikemaskini!");
+                btn.innerText = "UPDATE DATA";
+                // Clear input sikit
+                document.getElementById('inpStatus').value = "";
+            });
+        }
+
+        // --- 2. FUNGSI BACA DATA MEMBER (LIVE) ---
+        db.ref('operatives').on('value', (snapshot) => {
+            const listDiv = document.getElementById('memberList');
+            listDiv.innerHTML = ""; // Kosongkan dulu sebelum isi baru
+
+            if(snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    const name = child.key;
+                    
+                    // Design kad untuk setiap member
+                    const html = `
+                        <div style="border-bottom:1px solid #333; padding:10px 0; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <b style="color:#fff; font-size:1.1em;">${name}</b>
+                                <div style="color:var(--neon-green); font-size:0.9em;">
+                                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size:0.8em; margin-right:5px;"></i>
+                                    ${data.status || 'Offline'}
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="background:#222; border:1px solid #444; padding:2px 8px; font-size:0.8em; border-radius:4px; color:#aaa;">
+                                    ${data.role || 'Member'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                    listDiv.innerHTML += html;
+                });
+            } else {
+                listDiv.innerHTML = "<p style='text-align:center'>Tiada data.</p>";
+            }
+        });
+    </script>
+
+</body>
+</html>

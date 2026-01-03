@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRUTH :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>if(!localStorage.getItem('username')) window.location.href='login.html';</script>
+
+    <style>
+        /* Override Warna Jadi Merah */
+        .card { border-left-color: var(--neon-red); }
+        h1, h2 { color: var(--neon-red) !important; text-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
+        button { border-color: var(--neon-red); color: var(--neon-red); }
+        button:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+    </style>
+</head>
+<body>
+
+    <div class="container animate-in">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title" style="border-color:var(--neon-red);">TRUTH PROTOCOL</h1>
+            <p style="color:#888;">No lies detected.</p>
+        </div>
+
+        <div class="card" style="text-align:center; min-height:200px; display:flex; flex-direction:column; justify-content:center;">
+            <i class="fa-solid fa-eye" style="font-size:3em; color:var(--neon-red); margin-bottom:20px;"></i>
+            
+            <h2 id="qText" style="color:#fff !important; font-size:1.5em; margin:0;">ARE YOU READY?</h2>
+        </div>
+
+        <button onclick="getTruth()">GENERATE QUESTION</button>
+    </div>
+
+    <script>
+        // --- SOALAN TRUTH (Edit sini) ---
+        const truths = [
+            "Siapa member dalam group ni paling kau benci dulu?",
+            "Apa benda paling bodoh kau pernah buat demi awek/pakwe?",
+            "Pernah tak kau curi duit mak ayah? Berapa?",
+            "Jujur, kau pernah stalk IG ex kau tak minggu ni?",
+            "Siapa orang terakhir kau search kat Instagram?",
+            "Apa rahsia kau yang mak ayah kau tak tahu sampai sekarang?",
+            "Kalau dunia kiamat esok, siapa kau nak jumpa dulu?",
+            "Pernah tak kau 'ter'-kentut masa solat jemaah tapi buat bodoh?",
+            "Siapa paling annoying dalam group ni?",
+            "Bagi tahu password phone kau sekarang."
+        ];
+
+        function getTruth() {
+            const txt = document.getElementById('qText');
+            // Random Pilih
+            const randomQ = truths[Math.floor(Math.random() * truths.length)];
+            
+            txt.style.opacity = 0;
+            setTimeout(() => {
+                txt.innerText = randomQ;
+                txt.style.opacity = 1;
+            }, 200);
+        }
+    </script>
+</body>
+</html>

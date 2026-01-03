@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOCATION :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>if(!localStorage.getItem('username')) window.location.href='login.html';</script>
+
+    <style>
+        /* Style khas untuk kotak Map */
+        .radar-screen {
+            background: radial-gradient(circle, #00331e 0%, #000 70%);
+            border: 1px solid var(--neon-green);
+            height: 200px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2);
+        }
+        /* Grid line ala radar */
+        .grid-line {
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: linear-gradient(var(--neon-green) 1px, transparent 1px),
+            linear-gradient(90deg, var(--neon-green) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        .scan-line {
+            position: absolute;
+            width: 100%; height: 2px;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: scan 2s infinite linear;
+            z-index: 2;
+            opacity: 0.5;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .coords {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title">SECTOR SCAN</h1>
+            <p style="color:#888;">Identifying safe zone...</p>
+        </div>
+
+        <div class="card">
+            <h2>TARGET LOCATION</h2>
+            
+            <div class="radar-screen">
+                <div class="grid-line"></div>
+                <div class="scan-line" id="scanner"></div>
+                
+                <i class="fa-solid fa-location-dot" style="font-size:3em; color:#fff; z-index:3; margin-bottom:10px;"></i>
+                
+                <h1 id="locResult" style="z-index:3; margin:0; text-transform:uppercase; text-shadow:0 0 5px #000;">UNKNOWN</h1>
+                
+                <div class="coords" style="z-index:3;">
+                    LAT: <span id="lat">00.0000</span> | LNG: <span id="lng">00.0000</span>
+                </div>
+            </div>
+
+            <button onclick="findSpot()" id="btnLoc">INITIATE SCAN</button>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        // --- SENARAI LOKASI (Edit Sini) ---
+        const spots = [
+            "MAMAK HAKIM",
+            "MCDONALD'S",
+            "NASI KANDAR PELITA",
+            "WARUNG TOMYAM",
+            "7-ELEVEN (MEGI CUP)",
+            "RUMAH MEMBER",
+            "DATARAN MERDEKA",
+            "TAPAK PASAR MALAM"
+        ];
+
+        function findSpot() {
+            const txt = document.getElementById('locResult');
+            const lat = document.getElementById('lat');
+            const lng = document.getElementById('lng');
+            const btn = document.getElementById('btnLoc');
+            
+            btn.disabled = true;
+            btn.innerHTML = "TRIANGULATING...";
+
+            let count = 0;
+            
+            const loop = setInterval(() => {
+                // Random text lokasi
+                txt.innerText = spots[Math.floor(Math.random() * spots.length)];
+                
+                // Random coordinates effect (Tipu je ni)
+                lat.innerText = (3.0 + Math.random()).toFixed(4);
+                lng.innerText = (101.0 + Math.random()).toFixed(4);
+                
+                // Style glitch
+                txt.style.color = (count % 2 === 0) ? "#aaa" : "#fff";
+
+                count++;
+                if(count > 40) {
+                    clearInterval(loop);
+                    
+                    // Final Result
+                    const finalSpot = spots[Math.floor(Math.random() * spots.length)];
+                    txt.innerText = finalSpot;
+                    txt.style.color = "#00ff9d";
+                    txt.style.textShadow = "0 0 15px #00ff9d";
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-map-location-dot"></i> RE-SCAN';
+                }
+            }, 60);
+        }
+    </script>
+</body>
+</html>

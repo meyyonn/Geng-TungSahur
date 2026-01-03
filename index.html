@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAIN MENU :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="config.js"></script> <script>
+        // Kalau takde nama, tendang balik ke login
+        if(!localStorage.getItem('username')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <div style="text-align:center; margin-bottom:20px; margin-top:10px;">
+            <p style="color:#888; margin:0; font-size:0.9em;">OPERATIVE ONLINE</p>
+            <h1 style="margin:0; font-size:2.5em; color:#fff; text-transform:uppercase;" id="displayUser">...</h1>
+            <div style="height:2px; width:50px; background:var(--neon-green); margin:10px auto;"></div>
+        </div>
+
+        <div class="menu-grid">
+            
+            <a href="profil.html" class="menu-item">
+                <i class="fa-solid fa-id-card"></i>
+                <span>BIODATA</span>
+            </a>
+
+            <a href="chat.html" class="menu-item">
+                <i class="fa-solid fa-comments"></i>
+                <span>CHAT ROOM</span>
+            </a>
+
+            <a href="pick_person.html" class="menu-item">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <span>PICK ORANG</span>
+            </a>
+
+            <a href="pick_game.html" class="menu-item">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>PICK GAME</span>
+            </a>
+
+            <a href="lepak.html" class="menu-item">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span>LEPAK MANA?</span>
+            </a>
+
+            <a href="settings.html" class="menu-item">
+                <i class="fa-solid fa-gears"></i>
+                <span>SETTINGS</span>
+            </a>
+        </div>
+
+        <div class="card" style="margin-top:20px; border-color:var(--neon-red);">
+            <h2 style="color:var(--neon-red); border-color:var(--neon-red);">ZONE BAHAYA</h2>
+            <div class="menu-grid">
+                <a href="truth.html" class="menu-item" style="border-color:var(--neon-red); color:var(--neon-red);">
+                    <i class="fa-solid fa-user-secret"></i>
+                    <span>TRUTH</span>
+                </a>
+                <a href="dare.html" class="menu-item" style="border-color:var(--neon-red); color:var(--neon-red);">
+                    <i class="fa-solid fa-fire"></i>
+                    <span>DARE</span>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin-top:30px;">
+            <button onclick="confirmLogout()" class="btn-danger">
+                <i class="fa-solid fa-power-off"></i> LOGOUT SYSTEM
+            </button>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+        // Paparkan nama user kat atas
+        const currentUser = localStorage.getItem('username');
+        document.getElementById('displayUser').innerText = currentUser;
+    </script>
+
+</body>
+</html>

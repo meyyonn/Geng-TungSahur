@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PICKER :: TUNG_SAHUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>if(!localStorage.getItem('username')) window.location.href='login.html';</script>
+</head>
+<body>
+
+    <div class="container animate-in">
+        
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> MENU</a>
+
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 class="header-title">TARGET SELECTOR</h1>
+            <p style="color:#888;">System will randomly select an operative.</p>
+        </div>
+
+        <div class="card" style="text-align:center; padding:40px 20px; min-height:250px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+            
+            <i class="fa-solid fa-crosshairs" style="font-size:2em; color:#555; margin-bottom:10px;"></i>
+            
+            <h1 id="resultName" style="font-size:3em; margin:0; color:#333; letter-spacing:2px;">READY</h1>
+            <p id="statusText" style="color:#555; font-size:0.9em;">Waiting for input...</p>
+
+        </div>
+
+        <button onclick="startRoulette()" id="spinBtn" style="height:60px; font-size:1.3em;">
+            <i class="fa-solid fa-play"></i> INITIATE SEARCH
+        </button>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        let members = []; // Array untuk simpan nama member
+
+        // 1. Tarik nama dari Database (Supaya live)
+        // Kita ambil nama dari list 'operatives' yang dah update bio
+        db.ref('operatives').on('value', (snap) => {
+            members = []; // Reset array
+            snap.forEach(c => {
+                members.push(c.key); // Masukkan nama dalam array
+            });
+            
+            // Kalau list kosong (belum ada orang update bio), kita letak nama default
+            if(members.length === 0) {
+                members = ["AMIRUL", "ADLI", "HAIKAL", "HAZIQ", "NABIL"]; 
+            }
+        });
+
+        // 2. Logic Pusing Nama
+        function startRoulette() {
+            if(members.length < 2) {
+                alert("Tak cukup orang nak main undi ni! Update bio dulu.");
+                return;
+            }
+
+            const nameDisplay = document.getElementById('resultName');
+            const statusDisplay = document.getElementById('statusText');
+            const btn = document.getElementById('spinBtn');
+
+            // Disable button supaya tak tekan 2 kali
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.innerHTML = "SEARCHING...";
+
+            let counter = 0;
+            let speed = 50; // Kelajuan awal (ms)
+
+            // Bunyi effect (Optional: visual je ni)
+            statusDisplay.innerText = "SCANNING DATABASE...";
+            statusDisplay.style.color = "#00ff9d";
+
+            // Loop animasi
+            const loop = () => {
+                // Pilih random nama sementara
+                const randomName = members[Math.floor(Math.random() * members.length)];
+                nameDisplay.innerText = randomName;
+                
+                // Tukar warna random sikit bagi nampak glitch
+                nameDisplay.style.color = (counter % 2 === 0) ? "#fff" : "#888";
+
+                counter++;
+
+                if (counter < 30) {
+                    // Masih laju
+                    setTimeout(loop, 50);
+                } else if (counter < 45) {
+                    // Mula perlahan (slow down effect)
+                    setTimeout(loop, counter * 5); 
+                } else {
+                    // STOP! Tentukan pemenang sebenar
+                    const winner = members[Math.floor(Math.random() * members.length)];
+                    nameDisplay.innerText = winner;
+                    
+                    // Style Pemenang
+                    nameDisplay.style.color = "#00ff9d";
+                    nameDisplay.style.textShadow = "0 0 20px #00ff9d";
+                    statusDisplay.innerText = "TARGET ACQUIRED";
+                    statusDisplay.style.color = "#ff0055"; // Merah
+                    
+                    // Enable balik button
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> RESCAN';
+                }
+            };
+
+            // Mula loop
+            loop();
+        }
+    </script>
+</body>
+</html>
